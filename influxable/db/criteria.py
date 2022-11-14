@@ -8,6 +8,8 @@ class WhereOperatorEnum(Enum):
     GTE = 'gte'
     EQ = 'eq'
     NE = 'ne'
+    REGEQ = 'regeq'
+    REGNEQ = 'regneq'
 
 
 EVALUATED_OPERATORS = {
@@ -17,6 +19,8 @@ EVALUATED_OPERATORS = {
     WhereOperatorEnum.GTE: '>=',
     WhereOperatorEnum.EQ: '=',
     WhereOperatorEnum.NE: '!=',
+    WhereOperatorEnum.REGEQ: '=~',
+    WhereOperatorEnum.REGNEQ: '!~'
 }
 
 INVERTED_OPERATORS = {
@@ -26,6 +30,8 @@ INVERTED_OPERATORS = {
     WhereOperatorEnum.GTE: WhereOperatorEnum.LT,
     WhereOperatorEnum.EQ: WhereOperatorEnum.NE,
     WhereOperatorEnum.NE: WhereOperatorEnum.EQ,
+    WhereOperatorEnum.REGEQ: WhereOperatorEnum.REGNEQ,
+    WhereOperatorEnum.REGNEQ: WhereOperatorEnum.REGEQ
 }
 
 
@@ -50,6 +56,12 @@ class Field:
 
     def __gt__(self, value):
         return Criteria(self, value, WhereOperatorEnum.GT)
+
+    def __regeq__(self, value):
+        return Criteria(self, value, WhereOperatorEnum.REGEQ)
+
+    def __regneq__(self, value):
+        return Criteria(self, value, WhereOperatorEnum.REGNEQ)
 
     def __str__(self):
         return self.field_name
