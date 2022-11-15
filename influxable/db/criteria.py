@@ -91,7 +91,7 @@ class Criteria:
         if isinstance(right_operand, str):
             if operator == EVALUATED_OPERATORS[WhereOperatorEnum.REGEQ] \
                     or operator == EVALUATED_OPERATORS[WhereOperatorEnum.REGNEQ]:
-                right_operand = '{}'.format(self.right_operand)
+                right_operand = '/{}/'.format(self.right_operand)
             else:
                 right_operand = '\'{}\''.format(self.right_operand)
         return '{} {} {}'.format(left_operand, operator, right_operand)
