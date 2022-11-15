@@ -89,7 +89,11 @@ class Criteria:
         operator = EVALUATED_OPERATORS[self.operator]
         right_operand = self.right_operand
         if isinstance(right_operand, str):
-            right_operand = '\'{}\''.format(self.right_operand)
+            if operator == EVALUATED_OPERATORS[WhereOperatorEnum.REGEQ] \
+                    or operator == EVALUATED_OPERATORS[WhereOperatorEnum.REGNEQ]:
+                right_operand = '{}'.format(self.right_operand)
+            else:
+                right_operand = '\'{}\''.format(self.right_operand)
         return '{} {} {}'.format(left_operand, operator, right_operand)
 
     def __str__(self):
