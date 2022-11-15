@@ -89,7 +89,7 @@ class Criteria:
         operator = EVALUATED_OPERATORS[self.operator]
         right_operand = self.right_operand
         if isinstance(right_operand, str):
-            if operator == EVALUATED_OPERATORS[WhereOperatorEnum.REGEQ] \
+            if operator in [EVALUATED_OPERATORS[WhereOperatorEnum.REGEQ], EVALUATED_OPERATORS[WhereOperatorEnum.REGNEQ]]
                     or operator == EVALUATED_OPERATORS[WhereOperatorEnum.REGNEQ]:
                 right_operand = '/{}/'.format(self.right_operand)
             else:
