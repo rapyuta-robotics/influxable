@@ -1,3 +1,4 @@
+import re
 from enum import Enum
 
 
@@ -8,6 +9,8 @@ class WhereOperatorEnum(Enum):
     GTE = 'gte'
     EQ = 'eq'
     NE = 'ne'
+    REGEQ = 'regeq'
+    REGNEQ = 'regneq'
 
 
 EVALUATED_OPERATORS = {
@@ -17,6 +20,8 @@ EVALUATED_OPERATORS = {
     WhereOperatorEnum.GTE: '>=',
     WhereOperatorEnum.EQ: '=',
     WhereOperatorEnum.NE: '!=',
+    WhereOperatorEnum.REGEQ: '=~',
+    WhereOperatorEnum.REGNEQ: '!~'
 }
 
 INVERTED_OPERATORS = {
@@ -26,6 +31,8 @@ INVERTED_OPERATORS = {
     WhereOperatorEnum.GTE: WhereOperatorEnum.LT,
     WhereOperatorEnum.EQ: WhereOperatorEnum.NE,
     WhereOperatorEnum.NE: WhereOperatorEnum.EQ,
+    WhereOperatorEnum.REGEQ: WhereOperatorEnum.REGNEQ,
+    WhereOperatorEnum.REGNEQ: WhereOperatorEnum.REGEQ
 }
 
 
@@ -50,6 +57,12 @@ class Field:
 
     def __gt__(self, value):
         return Criteria(self, value, WhereOperatorEnum.GT)
+
+    def __regeq__(self, value):
+        return Criteria(self, value, WhereOperatorEnum.REGEQ)
+
+    def __regneq__(self, value):
+        return Criteria(self, value, WhereOperatorEnum.REGNEQ)
 
     def __str__(self):
         return self.field_name
@@ -77,7 +90,11 @@ class Criteria:
         operator = EVALUATED_OPERATORS[self.operator]
         right_operand = self.right_operand
         if isinstance(right_operand, str):
-            right_operand = '\'{}\''.format(self.right_operand)
+            if operator in [EVALUATED_OPERATORS[WhereOperatorEnum.REGEQ],
+                            EVALUATED_OPERATORS[WhereOperatorEnum.REGNEQ]]:
+                right_operand = '/{}/'.format(re.sub('/', '\\/', self.right_operand))
+            else:
+                right_operand = '\'{}\''.format(self.right_operand)
         return '{} {} {}'.format(left_operand, operator, right_operand)
 
     def __str__(self):
